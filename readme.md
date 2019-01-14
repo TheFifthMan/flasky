@@ -167,6 +167,17 @@ def create_app(config_name):
     ...
     return app
 ```
+# 测试
+测试初始化功能是否正常
+```
+pipenv shell
+flask run 
+```
+打开 http://localhost:5000 查看是否存在错误
+关闭 debug 功能
+设置错误
+是否接收到邮件，是否存储log
+
 
 代码地址：https://github.com/TheFifthMan/flasky
 # 参考
