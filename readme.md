@@ -142,10 +142,10 @@ from . import views,routes
 
 # index/views.py
 from flask.views import MethodView 
-from flask import render
+from flask import render_template
 class Index(MethodView):
     def get(self):
-        return render("index.html")
+        return render_template("index.html")
 
 # index/routes.py
 from index import index_bp
