@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "http://mirrors.aliyun.com/pypi/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+flask = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
+flask-wtf = "*"
+flask-mail = "*"
+
+[requires]
+python_version = "3.6"
