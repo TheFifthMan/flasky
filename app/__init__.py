@@ -15,6 +15,10 @@ def create_app(config_name):
     mail.init_app(app)
     from app.index import index_bp 
     app.register_blueprint(index_bp)
+    from app.auth import auth_bp
+    app.register_blueprint(auth_bp)
+
+    
     if not app.debug:
         
         # 记录到文件
