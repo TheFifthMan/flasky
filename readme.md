@@ -116,7 +116,7 @@ class Role(db.Model):
             self.permissions -= perm
 
     # 重置权限
-    def reset_permission(self,perm):
+    def reset_permission(self):
         self.permissions = 0    
     
     # 插入角色
