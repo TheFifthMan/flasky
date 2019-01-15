@@ -176,6 +176,13 @@ class User(db.Model):
         if self.role is None:
             # 分配一个默认角色
             self.role = Role.query.filter_by(default=True).first()
+    
+    # 判断用户角色
+    def can(self,perm):
+        return self.role is not None and self.role.has_permission(perm) 
+    
+    def is_administrator(self):
+        return self.can(Permission.ADMIN)
 ```
 接着要将这个插入角色的操作写进deploy命令，后面使用 flask deploy 即可部署
 ```
