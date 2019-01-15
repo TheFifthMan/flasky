@@ -112,7 +112,7 @@ def create_app(config_name):
         app.logger.addHandler(file_handler)
         app.logger.info('app start.')
 
-        # 发送邮件
+        # 发送邮件，可不设置
         auth = None
         if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWD']:
             auth = (app.config['MAIL_USERNAME'],app.config['MAIL_PASSWD'])
@@ -174,9 +174,7 @@ pipenv shell
 flask run 
 ```
 打开 http://localhost:5000 查看是否存在错误
-关闭 debug 功能
-设置错误
-是否接收到邮件，是否存储log
+
 
 
 代码地址：https://github.com/TheFifthMan/flasky
