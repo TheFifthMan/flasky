@@ -14,6 +14,7 @@ flask-login = "*"
 pymysql = "*"
 flask-mail = "*"
 python-dotenv = "*"
+flask-bootstrap = "*"
 
 [requires]
 python_version = "3.7"
