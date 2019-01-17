@@ -4,6 +4,13 @@ from app import db
 from flask import current_app
 from flask_login import UserMixin
 from app import login_manager
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from Crypto.Cipher import AES
+from Crypto import Random
+from binascii import b2a_hex,a2b_hex
+from datetime import datetime,timedelta
+
+
 @login_manager.user_loader
 def loader_user(user_id):
     return User.query.get(int(user_id))
@@ -15,7 +22,7 @@ class User(UserMixin,db.Model):
     email = db.Column(db.String(50))
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer,db.ForeignKey('roles.id'))
-
+    confirmed = db.Column(db.Boolean,default=False)
     def __init__(self,**kw):
         super(User,self).__init__(**kw)
         # 分配管理员角色
@@ -26,7 +33,7 @@ class User(UserMixin,db.Model):
         if self.role is None:
             # 分配一个默认角色
             self.role = Role.query.filter_by(default=True).first()
-    
+
     def can(self,perm):
         return self.role is not None and self.role.has_permission(perm) 
     
