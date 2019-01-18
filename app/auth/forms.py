@@ -24,3 +24,20 @@ class RegisterForm(FlaskForm):
     def validate_name(self,filed):
         if User.query.filter_by(name=filed.data).first():
             raise ValidationError("name registered")
+
+
+class ResetPasswdForm(FlaskForm):
+    password = PasswordField("Password",validators=[DataRequired()])
+    password1 = PasswordField("Password",validators=[DataRequired()])
+    password2 = PasswordField("Password Confirm",validators=[DataRequired(),EqualTo('password1')])    
+    submit = SubmitField("Reset Password")
+
+
+class ForgetPasswordForm(FlaskForm):
+    email = StringField("Email",validators=[DataRequired(),Length(1,64),Email()])
+    submit = SubmitField("Forget Password!")
+
+class ForgetResetPasswordForm(FlaskForm):
+    password1 = PasswordField("Password",validators=[DataRequired()])
+    password2 = PasswordField("Password Confirm",validators=[DataRequired(),EqualTo('password1')])    
+    submit = SubmitField("Reset Password")

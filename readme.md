@@ -215,6 +215,29 @@ class Register(MethodView):
 auth_bp.add_url_rule("/register",view_func=Register.as_view("register"))
 ```
 现在已经可以访问 register 了，也可以把用户加入数据库了，但是还需要一个用户邮件确认注册的操作. 
+```py
+# app/auth/views.py
+# 注册
+class Register(MethodView):
+    def __init__(self,**kw):
+        super(Register,self).__init__(**kw)
+        self.form = RegisterForm()
+    
+    def get(self):
+        return render_template("auth/register.html",form=self.form)
+    
+    def post(self):
+        if self.form.validate_on_submit():
+            user = User(username=self.form.name.data,password=self.form.password1.data,email=self.form.email.data)
+            db.session.add(user)
+            db.session.commit()
+            token = generate_confirmation_token(user.id)
+            send_email(user.email,"Confirm Your Account","auth/email/confirm",user=user,token=token)
+            flash("Please confirm your email account!")
+            return redirect("auth.unconfirm")
+
+        return render_template("auth/register.html",form=self.form)
+```
 
 
 
@@ -226,3 +249,12 @@ auth_bp.add_url_rule("/register",view_func=Register.as_view("register"))
 4. 打开了重置密码的页面，填写新密码
 
 
+
+# 测试
+当完成一个功能以后，需要做好质量保障：
+1. 写好单元测试
+2. 写好功能测试
+
+这里因为还没有API，所以功能测试只测试UI，使用selenium 作为驱动
+
+ 

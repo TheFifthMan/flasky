@@ -1,11 +1,11 @@
 from . import auth_bp
 from flask.views import MethodView
 from flask import render_template,request,redirect,flash,url_for,abort
-from .forms import LoginForm,RegisterForm
+from .forms import LoginForm,RegisterForm,ResetPasswdForm,ForgetPasswordForm,ForgetResetPasswordForm
 from .models import User
 from flask_login import login_user,current_user,login_required
 from app import db
-from app.utils.encrypt import encrypt_forget_passwd_token,verify_forget_passwd_token,generate_confirmation_token,confirm
+from app.utils.encrypt import encrypt_token,reset_passwd,generate_confirmation_token,confirm
 
 # 登陆
 class Login(MethodView):
@@ -79,7 +79,7 @@ class ResetPasswd(MethodView):
     def post(self):
         if self.form.validate_on_submit():
             if current_user.verify_password(self.form.password.data):
-                current_user.password = self.form.newpassword.data
+                current_user.password = self.form.newpassword1.data
                 flash("Changed your password")
                 db.session.commit()
                 return redirect("auth.login")
@@ -104,7 +104,7 @@ class ForgetPassword(MethodView):
             email = self.form.email.data
             u = User.query.filter_by(email=email).first()
             if u is not None:
-                token = u.generate_confirmation_token()
+                token = u.encrypt_token(email,3600)
                 send_email(user.email,"Reset Your Password","auth/email/forget",user=user,token=token)
                 flash(" send email succeed!")
             else:
@@ -119,10 +119,8 @@ class ForgetResetPassword(MethodView):
         self.form = ForgetResetPasswordForm()
 
     def get(self,token):
-        if verify_forget_passwd_token(token):
-            return render_template("auth/forget_reset_password.html",self.form = form)
-        else:
-            abort(404)
+        return render_template("auth/forget_reset_password.html",form = self.form)
+        
     
     def post(self,token):
         if self.form.validate_on_submit():
@@ -137,7 +135,7 @@ class ForgetResetPassword(MethodView):
 class ResendEmail(MethodView):
     @login_required
     def get(self):
-        token = current_user.generate_confirmation_token()
+        token = generate_confirmation_token(current_user.id)
         send_email(current_user.email,"Confirm Your Account","auth/email/confirm",user=current_user,token=token)
         flash("send succeed!")
         return url_for("index.index")
@@ -145,7 +143,8 @@ class ResendEmail(MethodView):
 
 @auth_bp.before_request
 def before_request():
-    if not current_user.confirmed \
+    if  current_user.is_authenticated \
+        and not current_user.confirmed \
         and request.blueprint != "auth" \
         and request.endpoint != "static":
         return redirect("auth.unconfirm")
