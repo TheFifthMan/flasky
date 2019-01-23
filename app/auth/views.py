@@ -3,6 +3,8 @@ from auth import auth_bp
 from flask.views import MethodView
 from flask import render_template,flash,redirect,url_for,request
 from flask_login import login_user,url_for,redirect
+from utils.email import send_email
+from app import db
 from .forms import RegisterForm, \
                     LoginForm, \
                     ResetPasswdForm, \
@@ -19,7 +21,22 @@ def Register(MethodView):
         return render_template("auth/register.html",title="Register",form=self.form)
 
     def post(self):
-        
+        if self.form.validate_on_submit():
+            email = self.form.email.data
+            password = self.form.password.data
+            user = User(email=email,password=password)
+            send_email()
+            db.session.add(user)
+            try:
+                db.session.commit()
+                flash("register succeed!")
+                return redirect(url_for('auth.login'))
+            except:
+                pass
+        flash("register failed")
+        return render_template("auth/register.html",title="Register",form=self.form)
+
+            
 
 # 已确认注册信息
 class Comfirm(MethodView):

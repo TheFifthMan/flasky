@@ -10,6 +10,9 @@ class User(db.Model):
     email = db.Column(db.String(50))
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer,db.ForeignKey('roles.id'))
+    
+    # 是否确认邮箱
+    confirm = db.Column(db.Boolean,default=False)
 
     def __init__(self,**kw):
         super(User,self).__init__(**kw)
