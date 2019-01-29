@@ -1,4 +1,5 @@
 import os 
+from .config impirt Config
 
 class TestingConfig(Config):
     Testing = True

@@ -1,4 +1,5 @@
 import os 
+from .config impirt Config
 
 class ProdConfig(Config):
     ADMIN = os.getenv("ADMIN")
